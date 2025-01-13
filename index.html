@@ -9,18 +9,23 @@
         input[type="text"] { width: 90%; margin-bottom: 10px; padding: 5px; }
         button { padding: 10px 20px; margin-right: 10px; cursor: pointer; }
         #result {
-            white-space: pre-wrap; /* 保留换行符 */
+           white-space: pre-wrap; /* 保留换行符 */
             margin-top: 10px;
-            border: 1px solid #ccc;
+             border: 1px solid #ccc;
             padding: 10px;
-           width:90%
+            width:90%
         }
        #hiddenContent {
             display: none; /* 初始隐藏 */
              white-space: pre-wrap; /* 保留换行符 */
              margin-top: 10px;
-        }
-        #showHideButton { padding: 10px 20px;  cursor: pointer;margin-top:10px}
+         }
+        #showHideButton { padding: 10px 20px;  cursor: pointer;margin-top:10px;}
+        #output {
+          width: 90%;
+            height: 100px;
+           margin-bottom: 10px;
+         }
     </style>
 </head>
 <body>
@@ -30,77 +35,13 @@
     <textarea id="plainText"></textarea>
 
     <label>密钥：</label>
-    <input type="text" id="key" value="1234567890abcdef" />
+    <input type="text" id="key" value="YourSecretKey123" />
    
     <button onclick="encryptText()">加密</button>
     <button onclick="decryptText()">解密</button>
-    <div id="result"></div>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/aes.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/pad-pkcs7.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/mode-cbc.js"></script>
-   <script>
-       function encryptText() {
-                var plainText = document.getElementById('plainText').value;
-                var key = document.getElementById('key').value;
-
-                 if (key.length < 16) {
-                   document.getElementById('result').innerText = "错误：密钥长度必须大于等于 16 个字符。";
-                    return;
-                 }
-                  var keyBytes =  new TextEncoder().encode(key).slice(0, 32)
-                var ivBytes = new TextEncoder().encode(key).slice(0, 16)
-                
-                var plainBytes = new TextEncoder().encode(plainText);
-                  var encryptedContent = CryptoJS.AES.encrypt(new Uint8Array(plainBytes), CryptoJS.enc.Hex.parse(bytesToHex(keyBytes)), {
-                     iv: CryptoJS.enc.Hex.parse(bytesToHex(ivBytes)),
-                      mode: CryptoJS.mode.CBC,
-                    padding: CryptoJS.pad.Pkcs7
-                }).toString();
-               document.getElementById('result').innerText = encryptedContent;
-           }
-      function decryptText() {
-                var encryptedText = document.getElementById('plainText').value;
-               var key = document.getElementById('key').value;
-
-                if (key.length < 16) {
-                   document.getElementById('result').innerText = "错误：密钥长度必须大于等于 16 个字符。";
-                    return;
-                }
-                var keyBytes =  new TextEncoder().encode(key).slice(0, 32)
-                var ivBytes = new TextEncoder().encode(key).slice(0, 16)
-                
-                var decrypted = CryptoJS.AES.decrypt(encryptedText, CryptoJS.enc.Hex.parse(bytesToHex(keyBytes)), {
-                    iv: CryptoJS.enc.Hex.parse(bytesToHex(ivBytes)),
-                    mode: CryptoJS.mode.CBC,
-                     padding: CryptoJS.pad.Pkcs7
-                });
-                try{
-                    var decryptedContent = decrypted.toString(CryptoJS.enc.Utf8);
-                }
-              catch{
-                   document.getElementById('result').innerText = "AES 解密失败";
-                     return
-                }
-                document.getElementById('result').innerText = decryptedContent
-             }
-          function bytesToHex(bytes) {
-               return Array.from(bytes, function(byte) {
-                 return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-               }).join('');
-           }
-       function toggleContent() {
-             var content = document.getElementById("hiddenContent");
-             if (content.style.display === "none") {
-                 content.style.display = "block";
-              } else {
-                 content.style.display = "none";
-              }
-        }
-    </script>
-    
-    <button id="showHideButton" onclick="toggleContent()">显示/隐藏数据</button>
-   <div id="hiddenContent">
+     <textarea id="output" readonly></textarea>
+      <button id="showHideButton" onclick="toggleContent()">显示/隐藏数据</button>
+    <div id="hiddenContent">
         <p>序列号：0B5D1E1BDD2F1E0E，
         @1@使用说明和常见问题解答\n\n
 
@@ -154,6 +95,66 @@ A: 可能原因：\n
 更新时间：2025-01-03@2@
         </p>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/aes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/pad-pkcs7.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/mode-cbc.js"></script>
+      <script>
+      function toggleContent() {
+            var content = document.getElementById("hiddenContent");
+             if (content.style.display === "none") {
+                  content.style.display = "block";
+            } else {
+                  content.style.display = "none";
+              }
+         }
+         function encryptText() {
+             var plainText = document.getElementById('plainText').value;
+            var key = document.getElementById('key').value;
 
+            if (key.length < 16) {
+                document.getElementById('output').value = "错误：密钥长度必须大于等于 16 个字符。";
+               return;
+             }
+             var keyBytes =  new TextEncoder().encode(key).slice(0, 32)
+                var ivBytes = new TextEncoder().encode(key).slice(0, 16)
+             var plainBytes = new TextEncoder().encode(plainText);
+           
+             var encryptedContent = CryptoJS.AES.encrypt(new Uint8Array(plainBytes), CryptoJS.enc.Hex.parse(bytesToHex(keyBytes)), {
+                iv: CryptoJS.enc.Hex.parse(bytesToHex(ivBytes)),
+                 mode: CryptoJS.mode.CBC,
+                  padding: CryptoJS.pad.Pkcs7
+           }).toString();
+            document.getElementById('output').value = encryptedContent;
+        }
+         function decryptText() {
+                var encryptedText = document.getElementById('plainText').value;
+               var key = document.getElementById('key').value;
+                if (key.length < 16) {
+                  document.getElementById('output').value  = "错误：密钥长度必须大于等于 16 个字符。";
+                   return;
+                 }
+                  var keyBytes =  new TextEncoder().encode(key).slice(0, 32)
+                var ivBytes = new TextEncoder().encode(key).slice(0, 16)
+                var decrypted = CryptoJS.AES.decrypt(encryptedText, CryptoJS.enc.Hex.parse(bytesToHex(keyBytes)), {
+                   iv: CryptoJS.enc.Hex.parse(bytesToHex(ivBytes)),
+                   mode: CryptoJS.mode.CBC,
+                   padding: CryptoJS.pad.Pkcs7
+               });
+                try{
+                     var decryptedContent = decrypted.toString(CryptoJS.enc.Utf8);
+                 }
+                 catch{
+                    document.getElementById('output').value = "AES 解密失败";
+                   return
+                 }
+               document.getElementById('output').value = decryptedContent;
+        }
+         function bytesToHex(bytes) {
+               return Array.from(bytes, function(byte) {
+                  return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+             }).join('');
+         }
+    </script>
 </body>
 </html>
