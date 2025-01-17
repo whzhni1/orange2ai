@@ -19,7 +19,10 @@ jobs:
           node-version: '18' # 可以根据需要修改 node 版本
 
       - name: Install dependencies
-        run: npm install axios
+        run: |
+            npm install axios puppeteer
+            sudo apt update
+            sudo apt install chromium
 
       - name: Run extraction script
         run: node extract.js
