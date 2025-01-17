@@ -13,7 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build and run Docker container
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # 可以根据需要修改 node 版本
+
+      - name: Install dependencies
         run: |
-          docker build -t extract-app .
-          docker run extract-app
+            npm install axios puppeteer
+            sudo apt update
+            sudo apt install chromium
+
+      - name: Run extraction script
+        run: node extract.js
