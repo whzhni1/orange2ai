@@ -1,0 +1,25 @@
+name: Extract Data from QQ Docs
+
+on:
+  push:
+    branches:
+      - main # 触发分支，可以根据需要修改
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  extract_data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # 可以根据需要修改 node 版本
+
+      - name: Install dependencies
+        run: npm install axios
+
+      - name: Run extraction script
+        run: node extract.js
