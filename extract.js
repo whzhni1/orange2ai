@@ -4,6 +4,8 @@ async function extractData() {
   try {
     const response = await axios.get('https://docs.qq.com/sheet/DUVNPdXRCeFFhQ3VO?tab=BB08J2');
     const html = response.data;
+
+     console.log("HTML内容：\n", html); // 添加这一行，打印 HTML 内容
     // 使用正则表达式提取序列号之间的内容
     const regex = /"序列号":\[(.*?)\]/s;
     const match = html.match(regex);
@@ -16,12 +18,6 @@ async function extractData() {
 
 
       console.log("提取到的数据：\n", extractedData);
-
-
-        // (可选) 保存到文件
-        //const fs = require('fs');
-        //fs.writeFileSync('extracted_data.txt', extractedData);
-
     } else {
       console.log('没有找到匹配的内容');
     }
