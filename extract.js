@@ -1,16 +1,18 @@
 const puppeteer = require('puppeteer');
 
 async function extractData() {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox']
+    });
     const page = await browser.newPage();
 
     try {
         await page.goto('https://docs.qq.com/sheet/DUVNPdXRCeFFhQ3VO?tab=BB08J2', { waitUntil: 'networkidle2' });
 
-       // 获取页面内容
+        // 获取页面内容
         const html = await page.content();
 
-       // 使用正则表达式提取序列号之间的内容
+        // 使用正则表达式提取序列号之间的内容
         const regex = /"序列号":\[(.*?)\]/s;
         const match = html.match(regex);
 
